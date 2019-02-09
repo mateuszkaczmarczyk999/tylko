@@ -3,3 +3,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.log
+*.pot
+*.pyc
+local_settings.py
+db.sqlite3
+media
