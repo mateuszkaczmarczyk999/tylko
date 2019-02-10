@@ -15,6 +15,8 @@ export default {
     }
   },
   mounted() {
+    this.refreshMessage()
+
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
@@ -29,16 +31,15 @@ export default {
 
     camera.position.z = 5;
 
-    var animate = function () {
-      requestAnimationFrame( animate );
-
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
-
-      renderer.render( scene, camera );
-    };
-
-    animate();
+    renderer.render( scene, camera );
+  },
+  methods: {
+    refreshMessage() {
+      this.$http.get('/boxes').then((response) => {
+        this.msg = response.data;
+        console.log(this.msg)
+      });
+    }
   },
 }
 </script>
