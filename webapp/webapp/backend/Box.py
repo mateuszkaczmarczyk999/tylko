@@ -48,6 +48,10 @@ class Box:
                     if(self.check_is_box_attach(box, axis_id)):
                         self._neighbours.add(box)
 
+    def get_json_repr(self):
+        return {"id": self.id, "width": self.edges[0], "height": self.edges[1], "depth": self.edges[2], 
+                "position": {"x": self.planes[0].start_edge, "y": self.planes[1].start_edge, "z": self.planes[2].start_edge}}
+
     def get_dict(self):
         return {"y1": self.vector_Y[0], "x1": self.vector_X[0], "z1": self.vector_Z[0], "id": self.id, "y2": self.vector_Y[1], "x2": self.vector_X[1], "z2": self.vector_Z[1]}
 

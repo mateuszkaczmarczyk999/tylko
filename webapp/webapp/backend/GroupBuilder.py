@@ -127,3 +127,7 @@ class GroupBuilder:
         return {'elements' : {box.id : box.get_dict() for g in self.sorted_attached_groups for box in g.get_boxes},
                 'materials' : {g.thickness : g.get_dict() for g in self.sorted_thickness_groups},
                 'groups' : {i : v.get_dict() for i,v in enumerate(self.sorted_attached_groups)}}
+
+    def get_all_json_groups(self):
+        return ([box.get_json_repr() for g in self.sorted_thickness_groups for box in g.get_boxes],
+                [box.get_json_repr() for g in self.sorted_attached_groups for box in g.get_boxes])

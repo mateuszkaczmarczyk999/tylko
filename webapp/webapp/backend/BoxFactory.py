@@ -11,6 +11,9 @@ class BoxFactory:
     def get_boxes(self):
         return self._imported_boxes
 
+    def get_all_json_boxes(self):
+        return [box.get_json_repr() for box in self._imported_boxes]
+
     def import_boxes_from_csv(self):
         with open(self.resource_path, newline='') as csvfile:
             spamreader = csv.reader(csvfile, delimiter=';')
