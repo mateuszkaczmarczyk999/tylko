@@ -109,23 +109,23 @@ export default {
         this.initialData = response.data
         console.log(response.data)
         for (var i = 0; i < response.data.all.length; i++) {
-            let boxGeometry = this.getBoxGeometry(response.data.all[i], 'rgb(150, 150, 150)')
+            let boxGeometry = this.getBoxGeometry(response.data.all[i])
             this.scene.add(boxGeometry)
             this.allBoxes.push(boxGeometry)
         }
         for (var i = 0; i < response.data.thickness.length; i++) {
-            let boxGeometry = this.getBoxGeometry(response.data.thickness[i], 'rgb(255,127,80)')
+            let boxGeometry = this.getBoxGeometry(response.data.thickness[i])
             this.thicknessBoxes.push(boxGeometry)
         }
         for (var i = 0; i < response.data.attached.length; i++) {
-            let boxGeometry = this.getBoxGeometry(response.data.attached[i], 'rgb(30,144,255)')
+            let boxGeometry = this.getBoxGeometry(response.data.attached[i])
             this.attachedBoxes.push(boxGeometry)
         }
       })
     },
-    getBoxGeometry(element, color_rgb) {
+    getBoxGeometry(element) {
       var geometry = new THREE.BoxGeometry( element.width, element.height, element.depth )
-      var material = new THREE.MeshPhongMaterial( {color: color_rgb} );
+      var material = new THREE.MeshPhongMaterial( {color: `rgb(${element.color[0]},${element.color[1]},${element.color[2]})`} );
       var cube = new THREE.Mesh( geometry, material )
       cube.position.x = element['position'].x
       cube.position.y = element['position'].y

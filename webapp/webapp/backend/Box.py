@@ -15,6 +15,13 @@ class Box:
         return self._neighbours
 
     @property 
+    def get_centroid(self):
+        x = sum(self.vector_X) / 2
+        y = sum(self.vector_Y) / 2
+        z = sum(self.vector_Z) / 2
+        return [x, y, z]
+
+    @property 
     def vector_X(self):
         return [self.planes[0].start_edge, self.planes[0].end_edge]
 
@@ -48,9 +55,9 @@ class Box:
                     if(self.check_is_box_attach(box, axis_id)):
                         self._neighbours.add(box)
 
-    def get_json_repr(self):
-        return {"id": self.id, "width": self.edges[0], "height": self.edges[1], "depth": self.edges[2], 
-                "position": {"x": self.planes[0].start_edge, "y": self.planes[1].start_edge, "z": self.planes[2].start_edge}}
+    def get_json_repr(self, color):
+        return {"id": self.id, "width": self.edges[0], "height": self.edges[1], "depth": self.edges[2], "color": color, 
+                "position": {"x": self.get_centroid[0], "y": self.get_centroid[1], "z": self.get_centroid[2]}}
 
     def get_dict(self):
         return {"y1": self.vector_Y[0], "x1": self.vector_X[0], "z1": self.vector_Z[0], "id": self.id, "y2": self.vector_Y[1], "x2": self.vector_X[1], "z2": self.vector_Z[1]}

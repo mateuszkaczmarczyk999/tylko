@@ -1,5 +1,6 @@
 from webapp.backend.Group import AttachedGroup, ThicknessGroup, Group
 from time import time
+import random
 
 def timer(build_func):
     def func_wrapp(self, boxes):
@@ -18,6 +19,8 @@ class GroupBuilder:
         self.boxes_to_check = {}
         self._sorted_attached_groups = []
         self._sorted_thickness_groups = []
+        self._color_attached_groups = []
+        self._color_thickness_groups = []
 
     @property 
     def sorted_attached_groups(self):
@@ -129,5 +132,13 @@ class GroupBuilder:
                 'groups' : {i : v.get_dict() for i,v in enumerate(self.sorted_attached_groups)}}
 
     def get_all_json_groups(self):
-        return ([box.get_json_repr() for g in self.sorted_thickness_groups for box in g.get_boxes],
-                [box.get_json_repr() for g in self.sorted_attached_groups for box in g.get_boxes])
+        self.generate_colors_for_distinct_group()
+        return ([box.get_json_repr(self._color_thickness_groups[i]) for i, g in enumerate(self.sorted_thickness_groups) for box in g.get_boxes],
+                [box.get_json_repr(self._color_attached_groups[i]) for i, g in enumerate(self.sorted_attached_groups) for box in g.get_boxes])
+
+    def generate_colors_for_distinct_group(self):
+        r = lambda: random.randint(20,240)
+        for group in self._sorted_thickness_groups:
+            self._color_thickness_groups.append([r(), r(), r()])
+        for group in self._sorted_attached_groups:
+            self._color_attached_groups.append([r(), r(), r()])

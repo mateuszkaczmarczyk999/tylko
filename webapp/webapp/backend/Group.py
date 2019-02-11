@@ -4,6 +4,7 @@ class Group:
     def __init__(self):
         self.group_id = None
         self._boxes = []
+        self.color = []
     
     @property    
     def get_boxes(self):
