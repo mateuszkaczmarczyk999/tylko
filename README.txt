@@ -18,3 +18,6 @@ to run (in '/webapp' directory):
     - npm run build
     - python manage.py collectstatic
     - python manage.py runserver
+
+input file in '~/webapp/webapp/backend/resources/toWeb.csv' dir. (replace and rename)
+output file in '~/webapp/webapp/backend/resources/toWeb.json' dir.
