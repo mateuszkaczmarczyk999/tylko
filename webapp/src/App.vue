@@ -7,6 +7,10 @@
         <button type="button" class="btn btn-warning" @click="groupByThickness">Pokaż podobne</button>
         <button type="button" class="btn btn-warning" @click="showAll">Pokaż wszystkie</button>
       </div>
+      <button class="btn btn-primary" disabled v-if="isPending">
+        <span class="spinner-border spinner-border-sm"></span>
+        Wczytuję geometrię ...
+      </button>
     </nav>
   </div>
 </template>
@@ -27,16 +31,34 @@ export default {
       renderer: null,
       camera: null,
       controls: null,
+      raycaster: null,
+      mouse: null,
+      isPending: false
     }
   },
   mounted() {
     this.initViewPort()
-    this.setCameraPosition()
-    this.setLight(500, 1)
+    this.setLight(700, 1)
     this.loadGeometry()
+    this.addMouseListener()
     this.update()
   },
   methods: {
+    onMouseMove(e){
+      this.mouse.x = ( e.clientX / window.innerWidth ) * 2 - 1;
+	    this.mouse.y = - ( e.clientY / window.innerHeight ) * 2 + 1;
+    },
+    pickObj(){
+	    this.raycaster.setFromCamera( this.mouse, this.camera );
+	    var intersects = this.raycaster.intersectObjects( this.scene.children );
+	    for ( var i = 0; i < intersects.length; i++ ) {
+		    intersects[ i ].object.material.color.set( 0xff0000 );
+	    }
+	    this.renderer.render( this.scene, this.camera );
+    },
+    addMouseListener(){
+      window.addEventListener( 'mousemove', this.onMouseMove, false );
+    },
     groupByThickness(){
       this.clearTheScene()
       for (let index = 0; index < this.thicknessBoxes.length; index++) {
@@ -71,13 +93,15 @@ export default {
       this.renderer.setSize( window.innerWidth, window.innerHeight )
       this.controls = new OrbitControls( this.camera, this.renderer.domElement )
       document.body.appendChild( this.renderer.domElement )
+      this.raycaster = new THREE.Raycaster();
+      this.mouse = new THREE.Vector2();
       //this.scene.fog = new THREE.FogExp2(0xffffff, 0.05)
       this.renderer.setClearColor('rgb(80, 80, 80)')
     },
     setCameraPosition(){
-      this.camera.position.z = 200;
-      this.camera.position.y = 50;
-      this.camera.position.x = 50;
+      this.camera.position.z = 500;
+      this.camera.position.y = 110;
+      this.camera.position.x = 110;
     },
     setLight(distance, intensity){      
       let light1 = new THREE.PointLight(0Xffffff, intensity)
@@ -101,10 +125,12 @@ export default {
       this.controls.update()
 
       requestAnimationFrame(() => {
+        // this.pickObj()
         this.update()
       })
     },
     loadGeometry() {
+      this.isPending = true
       this.axios.get('/boxes').then((response) => {
         this.initialData = response.data
         console.log(response.data)
@@ -121,6 +147,8 @@ export default {
             let boxGeometry = this.getBoxGeometry(response.data.attached[i])
             this.attachedBoxes.push(boxGeometry)
         }
+        this.setCameraPosition()
+        this.isPending = false
       })
     },
     getBoxGeometry(element) {

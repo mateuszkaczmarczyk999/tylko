@@ -1,7 +1,7 @@
 from functools import reduce 
 
 class Box:
-    def __init__(self, id, x_plane, y_plane, z_plane):
+    def __init__(self, id, x_plane, y_plane, z_plane, factory):
         self.id = int(id)
         self.planes = [x_plane, y_plane, z_plane]
         self.edges = [x_plane.range, y_plane.range, z_plane.range]
@@ -9,6 +9,7 @@ class Box:
         self.thickness_group = None
         self._neighbours = set()
         self._neighbours.add(self)
+        self._factory = factory
 
     @property 
     def get_neighbours(self):
@@ -56,8 +57,9 @@ class Box:
                         self._neighbours.add(box)
 
     def get_json_repr(self, color):
-        return {"id": self.id, "width": self.edges[0], "height": self.edges[1], "depth": self.edges[2], "color": color, 
-                "position": {"x": self.get_centroid[0], "y": self.get_centroid[1], "z": self.get_centroid[2]}}
+        scalar = self._factory.get_scalar
+        return {"id": self.id, "width": self.edges[0]*scalar, "height": self.edges[1]*scalar, "depth": self.edges[2]*scalar, "color": color, 
+                "position": {"x": self.get_centroid[0]*scalar, "y": self.get_centroid[1]*scalar, "z": self.get_centroid[2]*scalar}}
 
     def get_dict(self):
         return {"y1": self.vector_Y[0], "x1": self.vector_X[0], "z1": self.vector_Z[0], "id": self.id, "y2": self.vector_Y[1], "x2": self.vector_X[1], "z2": self.vector_Z[1]}
@@ -77,7 +79,7 @@ class Plane:
         return self.end_edge - self.start_edge
 
     def is_intersect_with(self, plane):
-        return (plane.end_edge > self.start_edge) and (plane.start_edge < self.end_edge)
+        return ((plane.end_edge > self.start_edge) and (plane.start_edge < self.end_edge))
 
     def is_on_the_edge(self, plane):
         return (plane.start_edge == self.end_edge) or (plane.end_edge == self.start_edge)

@@ -20,8 +20,9 @@ def polls_list(request):
 
     all_json_boxes = factory.get_all_json_boxes()
     groups = group_builder.get_all_json_groups()
-    bounding = factory.get_bounding_box()
-    result = {"all": all_json_boxes, "thickness": groups[0], "attached": groups[1], "bounding": bounding}
+    json_file = group_builder.get_json_file()
+    factory.save_boxes_to_file(json_file)
+    result = {"all": all_json_boxes, "thickness": groups[0], "attached": groups[1]}
     return JsonResponse(result)
 
 urlpatterns = [

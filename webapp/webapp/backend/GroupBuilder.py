@@ -1,6 +1,7 @@
 from webapp.backend.Group import AttachedGroup, ThicknessGroup, Group
 from time import time
 import random
+import uuid
 
 def timer(build_func):
     def func_wrapp(self, boxes):
@@ -55,16 +56,15 @@ class GroupBuilder:
     def binary_search_attached_planes(self, all_boxes):
         boxes_grouped_by_plane = self.sort_boxes_by_start_edge_of_plane(all_boxes)
         for axis_idx, box_group in enumerate(boxes_grouped_by_plane):
-            checked_targets = []
-            for box in box_group:
+            for box in all_boxes:
                 target = box.planes[axis_idx].end_edge
-                if(target not in checked_targets):
-                    first = self.binary_search(box_group, target, axis_idx, False, True)
-                    last = self.binary_search(box_group, target, axis_idx, True, False)
-                    if(box in self.boxes_to_check.keys()):
-                        self.boxes_to_check[box].append({axis_idx: box_group[first:last+1]})
-                    else:
-                        self.boxes_to_check[box] = [{axis_idx: box_group[first:last+1]}]
+
+                first = self.binary_search(box_group, target, axis_idx, False, True)
+                last = self.binary_search(box_group, target, axis_idx, True, False)
+                if(box in self.boxes_to_check.keys()):
+                    self.boxes_to_check[box].append({axis_idx: box_group[first:last+1]})
+                else:
+                    self.boxes_to_check[box] = [{axis_idx: box_group[first:last+1]}]
 
 
     def binary_search(self, box_group, target, axis_idx, right=False, left=False): 
@@ -95,7 +95,7 @@ class GroupBuilder:
                 self.assign_to_group(box)
 
     def assign_to_group(self, box):
-        attached_group = next((box.attached_group for box in box.get_neighbours if box.attached_group is not None), AttachedGroup())
+        attached_group = next((box.attached_group for box in box.get_neighbours if box.attached_group is not None), AttachedGroup(uuid.uuid4()))
         for neighbour in box.get_neighbours:
             if(not attached_group.contains(neighbour)):
                 attached_group.add(neighbour)

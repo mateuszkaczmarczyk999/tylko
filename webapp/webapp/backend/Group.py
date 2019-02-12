@@ -32,14 +32,23 @@ class Group:
 class AttachedGroup(Group):
     _all_groups = []
 
-    def __init__(self):
+    def __init__(self, uid):
         super().__init__()
+        self.group_id = uid
         AttachedGroup._all_groups.append(self)
         self._all_X = []
         self._all_Y = []
         self._all_Z = []
 
     def add(self, box):
+        if (box.attached_group == None):
+            self.add_single_box(box)
+        elif (box.attached_group.group_id != self.group_id):
+            new_boxes = box.attached_group.get_boxes
+            for new_box in new_boxes:
+                self.add_single_box(new_box)
+
+    def add_single_box(self, box):
         box.attached_group = self
         self._boxes.append(box)
         self._all_X.extend(box.vector_X)
