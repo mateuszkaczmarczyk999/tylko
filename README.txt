@@ -11,7 +11,7 @@ env:
     - package: django-webpack-loader (pip install django-webpack-loader) 
 
     - node ver: 10.15.1
-    - npm ver: 670
+    - npm ver: 6.7.0
 
 to run (in '/webapp' directory):
     - npm install

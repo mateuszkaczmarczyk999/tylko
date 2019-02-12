@@ -3,9 +3,9 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <h3 class="navbar-brand">tylko</h3>
       <div class="btn-group mr-sm-2" role="group">
-        <button type="button" class="btn btn-warning" @click="groupByTouch">Pokaż styczne</button>
-        <button type="button" class="btn btn-warning" @click="groupByThickness">Pokaż podobne</button>
-        <button type="button" class="btn btn-warning" @click="showAll">Pokaż wszystkie</button>
+        <button type="button" class="btn btn-warning" :disabled="isPending" @click="groupByTouch">Pokaż styczne</button>
+        <button type="button" class="btn btn-warning" :disabled="isPending" @click="groupByThickness">Pokaż podobne</button>
+        <button type="button" class="btn btn-warning" :disabled="!loadAll || isPending" @click="showAll">Pokaż wszystkie</button>
       </div>
       <button class="btn btn-primary" disabled v-if="isPending">
         <span class="spinner-border spinner-border-sm"></span>
@@ -33,7 +33,9 @@ export default {
       controls: null,
       raycaster: null,
       mouse: null,
-      isPending: false
+      isPending: false,
+      maxBoxCount: 1000,
+      loadAll: true
     }
   },
   mounted() {
@@ -133,14 +135,18 @@ export default {
       this.isPending = true
       this.axios.get('/boxes').then((response) => {
         this.initialData = response.data
-        console.log(response.data)
-        for (var i = 0; i < response.data.all.length; i++) {
+        console.log(response.data.file)
+        this.loadAll = this.maxBoxCount > response.data.all.length
+        if(this.loadAll){
+          for (var i = 0; i < response.data.all.length; i++) {
             let boxGeometry = this.getBoxGeometry(response.data.all[i])
             this.scene.add(boxGeometry)
             this.allBoxes.push(boxGeometry)
+          }
         }
         for (var i = 0; i < response.data.thickness.length; i++) {
             let boxGeometry = this.getBoxGeometry(response.data.thickness[i])
+            if(!this.loadAll) this.scene.add(boxGeometry)
             this.thicknessBoxes.push(boxGeometry)
         }
         for (var i = 0; i < response.data.attached.length; i++) {
